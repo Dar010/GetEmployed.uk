@@ -99,7 +99,9 @@ $cnd_name = $_POST["cnd_name"];
 $cnd_email = $_POST["cnd_email"];
 $cnd_pass = $_POST["cnd_pass"];
 $cnd_gender = $_POST["cnd_gender"];
+$cnd_houseno = $_POST["cnd_houseno"];
 $cnd_address = $_POST["cnd_address"];
+$cnd_postcode = $_POST["cnd_postcode"];
 $cnd_education = $_POST["cnd_education"];
 $cnd_mobile = $_POST["cnd_mobile"];
 $cnd_special = $_POST["cnd_special"];
@@ -119,7 +121,7 @@ if (!$con)
 else
 {
 	$db = mysqli_select_db ($con , "getemployed");
-	$query = "INSERT INTO jobseeker(JobSeeker_Name, JobSeeker_Email, JobSeeker_Password, JobSeeker_Gender, JobSeeker_Address, JobSeeker_Education, JobSeeker_Contact, JobSeeker_Specialization,CV) VALUES ('$cnd_name','$cnd_email','$cnd_pass','$cnd_gender','$cnd_address', '$cnd_education','$cnd_mobile','$cnd_special','$cnd_file')";
+	$query = "INSERT INTO jobseeker(JobSeeker_Name, JobSeeker_Email, JobSeeker_Password, JobSeeker_Gender, JobSeeker_HNo, JobSeeker_Address, JobSeeker_Postcode, JobSeeker_Education, JobSeeker_Contact, JobSeeker_Specialization,CV) VALUES ('$cnd_name','$cnd_email','$cnd_pass','$cnd_gender','$cnd_houseno','$cnd_address', '$cnd_postcode', '$cnd_education','$cnd_mobile','$cnd_special','$cnd_file')";
 	
 	if (mysqli_query($con,$query))
 	{

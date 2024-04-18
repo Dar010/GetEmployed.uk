@@ -122,9 +122,10 @@ function carousel() {
 }
 </script>
 </table>
-<form action="JobSearch.php" method="post">
+<form action="test3.php" method="post">
 Search <input type="text" name="keyword"><br>
-<input type="text" name="locationName"><br>
+<input type="text" name="location"><br>
+<input type="text" name="pcode">Postcode<br>
 <input class = "button" type = "submit" value = "Search" name = "job_search">
 </form>
 <div align = "center" style = "margin-bottom:50px";>

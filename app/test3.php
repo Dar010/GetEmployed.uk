@@ -21,6 +21,12 @@ img{padding-bottom:0px; padding-top:50px; padding-bottom:50px; margin-right:10px
     -webkit-transition: width 0.4s ease-in-out;
     transition: width 0.4s ease-in-out;
 }
+tr{
+    color:white;
+}
+td{
+    color:cyan;
+}
 input {font-family:Monotype Corsiva; font-size:20px;}
 
 /* When the input field gets focus, change its width to 100% */
@@ -109,60 +115,50 @@ input[type=text]:focus {
 		<a href = "contact.html" style = "background-color:grey;">CONTACT US</a>
 </div>
 <?php
-if (isset ($_POST ["job_search"]))
-{
-    session_start();
-    $reed_keyword = $_POST["keyword"];
-    $reed_locationName = $_POST["location"];
-    var_dump ($reed_keyword);
-    var_dump ($reed_locationName);
-    $url = "https://www.reed.co.uk/api/1.0/search";
-    
-    $username = "35dc79e1-cdf8-4643-b2b8-1466c6dd3a9b"; // username
-    $password = ""; // password
-
-    $request_parameters = [
-        'keywords' => $reed_keyword,
-        'location' => $reed_locationName
-    ];
-    ?>
-    <html>
-    <p style = "color:white;">
-    </html>
-    <?php 
-    var_dump($request_parameters); 
-    ?>
-    <br>
-    <?php  
-    $ch = curl_init($url);
-    $params = http_build_query($request_parameters);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
-    $url_full = $url . "?" . $params;
-    curl_setopt($ch, CURLOPT_URL, $url_full);
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    $result = json_decode($response, true);
-    var_dump($result);
-
-    if (isset($result['results'])) {
-        foreach ($result['results'] as $job) {
-            // Display information for each job
-            echo "Job Title: " . $job['jobTitle'] . "<br>";
-            echo "Location: " . $job['locationName'] . "<br>";
-            // Add more information as needed
-            echo "<br>";
-        }
+session_start();
+if (isset($_POST["job_search"])) {
+    //$cnd_houseno = $_POST["cnd_houseno"];
+    //$cnd_postcode = $_POST["cnd_postcode"];
+    $job_keyword = $_POST["keyword"];
+    $job_location = $_POST["location"];
+    $con = mysqli_connect("localhost", "root", "");
+    if (!$con) {
+        echo "connection problem!";
     } else {
-        echo "No results found.";
+        $db = mysqli_select_db($con, "getemployed");
+        
+        // Construct the query using LIKE operator to match partial keyword
+        $query = "SELECT * FROM jobs WHERE job_title LIKE '%$job_keyword%' AND job_location LIKE '%$job_location%'";
+        
+        if ($result = mysqli_query($con, $query)) {
+            $row_count = mysqli_num_rows($result);
+            if ($row_count > 0) {
+                echo "<table border='1'>";
+                // Fetch and display column names as table headers
+                echo "<tr>";
+                while ($fieldinfo = mysqli_fetch_field($result)) {
+                    echo "<th>".$fieldinfo->name."</th>";
+                }
+                echo "</tr>";
+                
+                // Fetch and display rows
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo "<tr>";
+                    // Access individual fields of the row using keys and display as table data
+                    foreach ($row as $value) {
+                        echo "<td>".$value."</td>";
+                    }
+                    echo "</tr>";
+                }
+                echo "</table>";
+            } else {
+                echo "No jobs found for the given keyword and location.";
+            }
+        } else {
+            echo "Error executing query: " . mysqli_error($con);
+        }
     }
-?>
-<html>
-</p>
-</html>
-<?php    
-// Do something with $result
 }
 ?>
+</body>
+</html>
