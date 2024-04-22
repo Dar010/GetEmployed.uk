@@ -122,7 +122,7 @@ function carousel() {
 }
 </script>
 </table>
-<form action="test3.php" method="post">
+<form action="test2.php" method="post">
 Search <input type="text" name="keyword"><br>
 <input type="text" name="location"><br>
 <input type="text" name="pcode">Postcode<br>
