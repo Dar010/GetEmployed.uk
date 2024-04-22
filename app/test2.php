@@ -116,7 +116,7 @@ input[type=text]:focus {
 </div>
 <?php
 // Function to fetch coordinates from the provided postcode using Google Maps Geocoding API
-/*function getCoordinatesFromPostcode($user_postcode) {
+function getCoordinatesFromPostcode($user_postcode) {
     // Google Maps Geocoding API endpoint
     $url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($user_postcode) . "&key=AIzaSyB2eDlUDfalojpeeO03paPD1lmqpW_oRhw"; // Replace YOUR_API_KEY with your actual Google Maps API key
 
@@ -132,10 +132,10 @@ input[type=text]:focus {
     } else {
         return null; // Return null if coordinates couldn't be fetched
     }
-}*/
+}
 
 // Function to call TFL API and retrieve travel information
-/*function getTravelInformationFromTFL($originLat, $originLng, $destinationLat, $destinationLng) {
+function getTravelInformationFromTFL($originLat, $originLng, $destinationLat, $destinationLng) {
     // TFL API endpoint for journey planning
     $url = "https://api.tfl.gov.uk/Journey/JourneyResults/{$originLat},{$originLng}/to/{$destinationLat},{$destinationLng}";
 
@@ -175,7 +175,7 @@ input[type=text]:focus {
     $summary .= "Departure: {$journey['startDateTime']}, ";
     $summary .= "Arrival: {$journey['arrivalDateTime']}";
     return $summary;
-}*/
+}
 
 // Main logic to fetch travel information and display job search results
 session_start();
@@ -188,17 +188,18 @@ if (isset($_POST["job_search"])) {
     ?><p style = "color:white;"><?php
     var_dump($job_keyword, $job_location, $user_postcode);?></p><?php
     // Fetch coordinates from the provided postcode
-   /* $userCoordinates = getCoordinatesFromPostcode($user_postcode);
+    userCoordinates = getCoordinatesFromPostcode($user_postcode);
     ?><p style = "color:white;"><?php
     var_dump($userCoordinates);?></p><?php
     if ($userCoordinates) {
         $originLat = $userCoordinates['latitude'];
-        $originLng = $userCoordinates['longitude'];*/
+        $originLng = $userCoordinates['longitude'];
         // Connect to the database
         $con = mysqli_connect("localhost", "root", "", "getemployed");
         if (!$con) {
             echo "Connection problem!";
-        } else {
+        }
+        else {
             // Query to fetch job search results from the database based on keyword and location
             $query = "SELECT * FROM jobs WHERE job_title LIKE '%$job_keyword%' AND job_location LIKE '%$job_location%'";
             var_dump($query);
@@ -224,13 +225,15 @@ if (isset($_POST["job_search"])) {
                     foreach ($row as $key => $value) {
                         if ($key != 'job_co-ordinates') {
                             echo "<td>".$value."</td>";
-                        } else {
+                        }
+                        else {
                             // Extract job coordinates from the single column
                             $coordinates = explode(',', $value);
-                            $to = $coordinates[0], $coordinates[1];
+                            $destinationLat = $coordinates[0];
+                            $destinationLng = $coordinates[1];
                             //$destinationLng = $coordinates[1];
                             // Call TFL API to get travel information
-                            $travelInfo = getTravelInfoTFL($from, $to); //getTravelInformationFromTFL($originLat, $originLng, $destinationLat, $destinationLng);
+                            $travelInfo =  getTravelInformationFromTFL($originLat, $originLng, $destinationLat, $destinationLng);
                             // Display travel information
                             echo "<td>".$travelInfo."</td>";
                             ?><p style = "color:white;"><?php
@@ -240,12 +243,15 @@ if (isset($_POST["job_search"])) {
                     echo "</tr>";
                 }
                 echo "</table>";
-            } else {
+            }
+            else {
                 echo "Error executing query: " . mysqli_error($con);
             }
         }
-    } else {
+    }
+    else {
         echo "Coordinates not found for the provided postcode.";
+    }
 }
 ?>
 
