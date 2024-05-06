@@ -81,9 +81,26 @@ img{padding-bottom:0px; padding-top:85px; padding-left:25px;padding-bottom:50px;
 .dropdown:hover .dropbtn {
     background-color: blue;
 }
+.button {
+    background-color: white;
+    border-color: black;
+	border-radius:10px;
+    color: black;
+    padding: 5px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+	font-family:Monotype Corsiva;
+	}
+.button:hover {
+	color:blue;
+	border-color:blue;
+	}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="css/set2.css" />
+<script src="https://kit.fontawesome.com/a01be89b5f.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div align="center" style="margin:0px;padding:0px;">
@@ -123,10 +140,32 @@ function carousel() {
 </script>
 </table>
 <form action="test2.php" method="post">
-Search <input type="text" name="keyword"><br>
-<input type="text" name="location"><br>
-<input type="text" name="pcode">Postcode<br>
-<input class = "button" type = "submit" value = "Search" name = "job_search">
+<div align = "center">
+<p style = "color:white; padding-left:50%;">(Only for Travel Information)</p>
+    <span class="input input--kohana">
+        <input class="input__field input__field--kohana" type="text" id="input-29" name = "keyword" style = "padding-left:23%; padding-bottom:14px; padding-top:24px; background-color:white; color:black;"required/>
+        <label class="input__label input__label--kohana"style = "color:black; font-family:Monotype Corsiva; font-size:15px;" for="input-29">
+            <i class="fas fa-briefcase icon icon--kohana" style = "color:blue;"></i>
+            <span class="input__label-content input__label-content--kohana" >Job Title</span>
+        </label>
+    </span>
+    <span class="input input--kohana" style = "color : blue;">
+		<input class="input__field input__field--kohana" name = "location" type="textarea" id="input-29" style = "padding-left:31%; padding-bottom:13px; padding-top:24px; background-color:white; color:black;" required>
+		<label class="input__label input__label--kohana" style = "color:black; font-family:Monotype Corsiva; font-size:15px;"for="input-29">
+			<i class="fa fa-home icon icon--kohana"style = "color:blue;"></i>
+			<span class="input__label-content input__label-content--kohana" >Job Location</span>
+		</label>
+	</span>
+    <span class="input input--kohana" style = "color : blue;">
+		<input class="input__field input__field--kohana" name = "pcode" type="textarea" id="input-29" style = "padding-left:33%; padding-bottom:13px; padding-top:24px; background-color:white; color:black;">
+		<label class="input__label input__label--kohana" style = "color:black; font-family:Monotype Corsiva; font-size:15px;"for="input-29">
+			<i class="fa fa-map-pin icon icon--kohana"style = "color:blue;"></i>
+			<span class="input__label-content input__label-content--kohana" > Your Postcode</span>
+		</label>
+    </span>
+    <br>
+    <input class = "button" type = "submit" value = "Search" name = "job_search">
+    <p style = "color:white;">Travel Information available for London Only</p>
 </form>
 <div align = "center" style = "margin-bottom:50px";>
 <h2>

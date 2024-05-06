@@ -147,12 +147,12 @@ input[type=text]:focus {
 					</label>
 				</span>
 	<span class="input input--kohana" style = "color : blue;">
-					<input class="input__field input__field--kohana" name = "cnd_address" type="textarea" id="input-29" style = "padding-left:20%; background-color:white; color:black;" required>
-					<label class="input__label input__label--kohana" style = "color:black; font-family:Monotype Corsiva; font-size:15px;"for="input-29">
-						<i class="fa fa-home icon icon--kohana"style = "color:blue;"></i>
-						<span class="input__label-content input__label-content--kohana" >Address</span>
-					</label>
-				</span>
+		<input class="input__field input__field--kohana" name = "cnd_address" type="textarea" id="input-29" style = "padding-left:20%; background-color:white; color:black;" required>
+		<label class="input__label input__label--kohana" style = "color:black; font-family:Monotype Corsiva; font-size:15px;"for="input-29">
+			<i class="fa fa-home icon icon--kohana"style = "color:blue;"></i>
+			<span class="input__label-content input__label-content--kohana" >Address</span>
+		</label>
+	</span>
 	<span class="input input--kohana" style = "color : blue;">
 		<input class="input__field input__field--kohana" name = "cnd_postcode" type="textarea" id="input-29" style = "padding-left:20%; background-color:white; color:black;" required>
 		<label class="input__label input__label--kohana" style = "color:black; font-family:Monotype Corsiva; font-size:15px;"for="input-29">

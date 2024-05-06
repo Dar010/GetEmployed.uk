@@ -177,24 +177,76 @@ function getTravelInformationFromTFL($originLat, $originLng, $destinationLat, $d
     return $summary;
 }
 
+function getTravelInfoTFL($user_postcode, $jobCoordinates)  {
+    // Code snippet adapted from TFL test site for making journey planner requests:
+    // https://api-portal.tfl.gov.uk/api-details#api=Journey&operation=Journey_JourneyResultsByPathFromPathToQueryViaQueryNationalSearchQueryDateQu
+    //  The following will create a request equivalent to the following:
+    // "https://api.tfl.gov.uk/Journey/JourneyResults/SW15%205PH/to/51.8,-0.2?nationalSearch=true&date=20240412&time=0900&timeIs=Arriving&journeyPreference=leasttime&accessibilityPreference=NoRequirements&walkingSpeed=Slow&cyclePreference=None&bikeProficiency=Easy";
+    
+    // Setting this to the postcode of the users house without any spaces
+    $from = $user_postcode;
+    // Setting this to the co-ordinates of the workplace while adding a comma
+    $to = str_replace(' ', ',', $jobCoordinates);
+
+    // Create a base URL request using the from and to
+    $base_url = "https://api.tfl.gov.uk/Journey/JourneyResults/$from/to/$to";
+    var_dump($base_url);
+    
+    // Setting up the various options for the travel query
+    // Details at: https://api-portal.tfl.gov.uk/api-details#api=Journey&operation=Journey_JourneyResultsByPathFromPathToQueryViaQueryNationalSearchQueryDateQu
+    $travel_options = [
+        "nationalSearch" => "true",
+        // Setting this to the date of the next weekday from time of request
+        "date" => date('yyyyMMdd'),
+        // Setting this to be always 9am
+        "time" => "0900", 
+        "timeIs" => "Arriving",
+        "journeyPreference" => "leasttime",
+    ];
+    //constructing complete URL with query parameters
+    $url = $base_url . "?" . http_build_query($travel_options);
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+    # Request headers
+    $headers = array(
+        'Cache-Control: no-cache',);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+    $resp = curl_exec($curl);
+    if ($resp === false) {
+        echo "cURL Error: " . curl_error($curl);
+        return "Error: Unable to retrieve journey details.";
+    }
+    curl_close($curl);
+    var_dump($resp);
+
+    // Turn the JSON returned into a PHP object
+    $json_resp = json_decode($resp);  
+
+    // Check if decoding was successful and the expected structure exists
+    if ($json_resp && isset($json_resp->journeys) && is_array($json_resp->journeys)) {
+        $journeyTimes = [];
+        foreach ($json_resp->journeys as $journey) {
+            $journeyTimes[] = $journey->duration;
+        }
+        return implode(', ', $journeyTimes); // Return durations as comma-separated string
+    } else {
+        return "No journey information available";
+    }
+ }
+
 // Main logic to fetch travel information and display job search results
 session_start();
 if (isset($_POST["job_search"])) {
-    //$cnd_houseno = $_POST["cnd_houseno"];
-    //$cnd_postcode = $_POST["cnd_postcode"];
     $job_keyword = $_POST["keyword"];
     $job_location = $_POST["location"];
     $user_postcode = $_POST["pcode"];
     ?><p style = "color:white;"><?php
     var_dump($job_keyword, $job_location, $user_postcode);?></p><?php
-    // Fetch coordinates from the provided postcode
-    userCoordinates = getCoordinatesFromPostcode($user_postcode);
-    ?><p style = "color:white;"><?php
-    var_dump($userCoordinates);?></p><?php
-    if ($userCoordinates) {
-        $originLat = $userCoordinates['latitude'];
-        $originLng = $userCoordinates['longitude'];
-        // Connect to the database
         $con = mysqli_connect("localhost", "root", "", "getemployed");
         if (!$con) {
             echo "Connection problem!";
@@ -205,7 +257,7 @@ if (isset($_POST["job_search"])) {
             var_dump($query);
             $result = mysqli_query($con, $query);
             ?><p style = "color:white;"><?php
-                var_dump($result);?></p><?php
+               // var_dump($result);?></p><?php
             if ($result) {
                 // Display job search results as a table
                 echo "<table border='1'>";
@@ -220,27 +272,27 @@ if (isset($_POST["job_search"])) {
                 var_dump($result);?></p><?php
                 // Fetch and display rows
                 while ($row = mysqli_fetch_assoc($result)) {
-                    echo "<tr>";
-                    // Access individual fields of the row using keys and display as table data
-                    foreach ($row as $key => $value) {
-                        if ($key != 'job_co-ordinates') {
-                            echo "<td>".$value."</td>";
-                        }
-                        else {
-                            // Extract job coordinates from the single column
-                            $coordinates = explode(',', $value);
-                            $destinationLat = $coordinates[0];
-                            $destinationLng = $coordinates[1];
-                            //$destinationLng = $coordinates[1];
-                            // Call TFL API to get travel information
-                            $travelInfo =  getTravelInformationFromTFL($originLat, $originLng, $destinationLat, $destinationLng);
-                            // Display travel information
-                            echo "<td>".$travelInfo."</td>";
-                            ?><p style = "color:white;"><?php
-                            var_dump($travelInfo);?></p><?php
-                        }
-                    }
                     echo "</tr>";
+                    echo "<td>";
+                    echo $row['jobs_id'];
+                    echo "</td>";
+                    echo "<td>";
+                    echo $row['job_title'];
+                    echo "</td>";
+                    echo "<td>";
+                    echo $row['company'];
+                    echo "</td>";
+                    echo "<td>";
+                    echo $row['job_location'];
+                    echo "</td>";
+                    echo "<td>";
+                    echo $row['job_co-ordinates'];
+                    echo "</td>";
+                    $jobCoordinates = $row['job_co-ordinates'];
+                    $travelinfo = getTravelInfoTFL($user_postcode, $jobCoordinates);
+                    echo "<td>";
+                    echo $travelinfo;
+                    echo "<tr>";
                 }
                 echo "</table>";
             }
@@ -252,7 +304,7 @@ if (isset($_POST["job_search"])) {
     else {
         echo "Coordinates not found for the provided postcode.";
     }
-}
+
 ?>
 
 </body>
