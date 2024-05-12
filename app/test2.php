@@ -21,11 +21,19 @@ img{padding-bottom:0px; padding-top:50px; padding-bottom:50px; margin-right:10px
     -webkit-transition: width 0.4s ease-in-out;
     transition: width 0.4s ease-in-out;
 }
+table{
+    border-color: white;
+}
+th{
+    background-color: royalblue;
+}
 tr{
     color:white;
+    border-color: white;
 }
 td{
-    color:cyan;
+    color:white;
+    border-color: white;
 }
 input {font-family:Monotype Corsiva; font-size:20px;}
 
@@ -106,17 +114,46 @@ input[type=text]:focus {
 		<a href = "index.php"><img src = "images/FNLLOGO1.png" width = "1000" height = "330"></a>
 	</div>
 	<div class="w3-panel w3-black">	
-			<div align = "right">
+    <div align = "right">
+  <?php
+  session_start();
+  $con = mysqli_connect("localhost", "root", "", "getemployed");
+  if (!$con)
+      {
+          echo "connection problem";
+      }
+  else
+      {
+          $db = mysqli_select_db($con,"getemployed");
+          $unique = $_SESSION ["login_member"];
+          $query = "SELECT * FROM jobseeker WHERE JobSeeker_Email = '$unique'";
+          $result = mysqli_query($con,$query);
+          $col = mysqli_fetch_array($result);
+      }
+  if (!isset ($_SESSION["login_member"]))
+  {
+    ?>
   <a href = "sign.php" style = "background-color:grey;">SIGN UP</a>
-  <a href = "login.php" style = "background-color:grey;">LOGIN</a>
+  <a href = "login.php"  style = "background-color:grey;">LOGIN</a>
+    <?php }
+    else{
+        ?>
+    <div class="dropdown">
+    <a href = "profile.php" class="dropbtn" style = "background-color:grey;">SETTINGS</a>
+    <div class="dropdown-content" style="z-index:10;">
+    <a href = "editjobseeker.php">Update Profile</a><hr>
+        <a href = "logout.php">Logout</a>
+    </div>
+    </div>
+    <?php } ?>
 </div>
 		<a href = "index.php" style = "background-color:grey;">HOME</a>
-		<a href = "about.html" style = "background-color:grey;">ABOUT</a> 
-		<a href = "contact.html" style = "background-color:grey;">CONTACT US</a>
+		<a href = "about.php" style = "background-color:grey;">ABOUT</a> 
+		<a href = "contact.php" style = "background-color:grey;">CONTACT US</a>
 </div>
 <?php
 // Function to fetch coordinates from the provided postcode using Google Maps Geocoding API
-function getCoordinatesFromPostcode($user_postcode) {
+/*function getCoordinatesFromPostcode($user_postcode) {
     // Google Maps Geocoding API endpoint
     $url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($user_postcode) . "&key=AIzaSyB2eDlUDfalojpeeO03paPD1lmqpW_oRhw"; // Replace YOUR_API_KEY with your actual Google Maps API key
 
@@ -175,7 +212,7 @@ function getTravelInformationFromTFL($originLat, $originLng, $destinationLat, $d
     $summary .= "Departure: {$journey['startDateTime']}, ";
     $summary .= "Arrival: {$journey['arrivalDateTime']}";
     return $summary;
-}
+}*/
 
 function getTravelInfoTFL($user_postcode, $jobCoordinates)  {
     // Code snippet adapted from TFL test site for making journey planner requests:
@@ -190,18 +227,19 @@ function getTravelInfoTFL($user_postcode, $jobCoordinates)  {
 
     // Create a base URL request using the from and to
     $base_url = "https://api.tfl.gov.uk/Journey/JourneyResults/$from/to/$to";
-    var_dump($base_url);
+    //var_dump($base_url);
     
     // Setting up the various options for the travel query
     // Details at: https://api-portal.tfl.gov.uk/api-details#api=Journey&operation=Journey_JourneyResultsByPathFromPathToQueryViaQueryNationalSearchQueryDateQu
     $travel_options = [
         "nationalSearch" => "true",
         // Setting this to the date of the next weekday from time of request
-        "date" => date('yyyyMMdd'),
+        "date" => date('Ymd'),
         // Setting this to be always 9am
         "time" => "0900", 
         "timeIs" => "Arriving",
         "journeyPreference" => "leasttime",
+        "mode" => "bus,overground,tube,dlr,tram",
     ];
     //constructing complete URL with query parameters
     $url = $base_url . "?" . http_build_query($travel_options);
@@ -222,22 +260,33 @@ function getTravelInfoTFL($user_postcode, $jobCoordinates)  {
         return "Error: Unable to retrieve journey details.";
     }
     curl_close($curl);
-    var_dump($resp);
+    //var_dump($resp);
 
     // Turn the JSON returned into a PHP object
     $json_resp = json_decode($resp);  
 
     // Check if decoding was successful and the expected structure exists
     if ($json_resp && isset($json_resp->journeys) && is_array($json_resp->journeys)) {
-        $journeyTimes = [];
+        $journeyInfo = [];
+
+        // Loop through each journey in the response
         foreach ($json_resp->journeys as $journey) {
-            $journeyTimes[] = $journey->duration;
+            $modes = [];
+            foreach ($journey->legs as $leg) {
+                if (isset($leg->mode)) {
+                    $modes[] = $leg->mode->name; // Collect transport modes
+                }
+            }
+            $modesString = implode(',', $modes);
+            $journeyInfo[] = "{$modesString}: {$journey->duration} minutes"; // Format journey info
         }
-        return implode(', ', $journeyTimes); // Return durations as comma-separated string
+
+        // Return journey information as a comma-separated string
+        return implode('; ', $journeyInfo);
     } else {
         return "No journey information available";
     }
- }
+}
 
 // Main logic to fetch travel information and display job search results
 session_start();
@@ -246,15 +295,15 @@ if (isset($_POST["job_search"])) {
     $job_location = $_POST["location"];
     $user_postcode = $_POST["pcode"];
     ?><p style = "color:white;"><?php
-    var_dump($job_keyword, $job_location, $user_postcode);?></p><?php
+    //var_dump($job_keyword, $job_location, $user_postcode);?></p><?php
         $con = mysqli_connect("localhost", "root", "", "getemployed");
         if (!$con) {
             echo "Connection problem!";
         }
         else {
             // Query to fetch job search results from the database based on keyword and location
-            $query = "SELECT * FROM jobs WHERE job_title LIKE '%$job_keyword%' AND job_location LIKE '%$job_location%'";
-            var_dump($query);
+            $query = "SELECT `job_title`, `company`, `job_location`, `job_description`, `job_co-ordinates` FROM `jobs` WHERE job_title LIKE '%$job_keyword%' AND job_location LIKE '%$job_location%'";
+            //var_dump($query);
             $result = mysqli_query($con, $query);
             ?><p style = "color:white;"><?php
                // var_dump($result);?></p><?php
@@ -269,30 +318,20 @@ if (isset($_POST["job_search"])) {
                 echo "<th>Travel Information</th>"; // New column for travel information
                 echo "</tr>";
                 ?><p style = "color:white;"><?php
-                var_dump($result);?></p><?php
+                //var_dump($result);?></p><?php
                 // Fetch and display rows
                 while ($row = mysqli_fetch_assoc($result)) {
-                    echo "</tr>";
-                    echo "<td>";
-                    echo $row['jobs_id'];
-                    echo "</td>";
-                    echo "<td>";
-                    echo $row['job_title'];
-                    echo "</td>";
-                    echo "<td>";
-                    echo $row['company'];
-                    echo "</td>";
-                    echo "<td>";
-                    echo $row['job_location'];
-                    echo "</td>";
-                    echo "<td>";
-                    echo $row['job_co-ordinates'];
-                    echo "</td>";
+                    echo "<tr>";
+                    echo "<td> {$row['job_title']} </td>";
+                    echo "<td> {$row['company']} </td>";
+                    echo "<td> {$row['job_location']} </td>";
+                    echo "<td> {$row['job_description']} </td>";
+                    echo "<td> {$row['job_co-ordinates']} </td>";
                     $jobCoordinates = $row['job_co-ordinates'];
                     $travelinfo = getTravelInfoTFL($user_postcode, $jobCoordinates);
-                    echo "<td>";
-                    echo $travelinfo;
-                    echo "<tr>";
+                    //var_dump($travelinfo);
+                    echo "<td> {$travelinfo}> </td>";
+                    echo "</tr>";
                 }
                 echo "</table>";
             }

@@ -88,21 +88,50 @@ img{padding-bottom:0px; padding-top:85px; padding-left:25px;padding-bottom:50px;
 		<a href = "index.html"><img src = "images/FNLLOGO1.png" width = "1000" height = "330"></a>
 </div>
 <div class="w3-panel w3-black">	
-			<div align = "right">
+<div align = "right">
+  <?php
+  session_start();
+  $con = mysqli_connect("localhost", "root", "", "getemployed");
+  if (!$con)
+      {
+          echo "connection problem";
+      }
+  else
+      {
+          $db = mysqli_select_db($con,"getemployed");
+          $unique = $_SESSION ["login_member"];
+          $query = "SELECT * FROM jobseeker WHERE JobSeeker_Email = '$unique'";
+          $result = mysqli_query($con,$query);
+          $col = mysqli_fetch_array($result);
+      }
+  if (!isset ($_SESSION["login_member"]))
+  {
+    ?>
   <a href = "sign.php" style = "background-color:grey;">SIGN UP</a>
-  <a href = "login.php" style = "background-color:grey;">LOGIN</a>
-	</div>
+  <a href = "login.php"  style = "background-color:grey;">LOGIN</a>
+    <?php }
+    else{
+        ?>
+    <div class="dropdown">
+    <a href = "profile.php" class="dropbtn" style = "background-color:grey;">SETTINGS</a>
+    <div class="dropdown-content" style="z-index:10;">
+    <a href = "editjobseeker.php">Update Profile</a><hr>
+        <a href = "logout.php">Logout</a>
+    </div>
+    </div>
+    <?php } ?>
+</div>
 		<a href = "index.php" style = "background-color:grey;">HOME</a>
-		<a href = "about.html" style = "background-color:grey;">ABOUT</a> 
-		<a href = "contact.html" style = "background-color:grey;">CONTACT US</a>
+		<a href = "about.php" style = "background-color:grey;">ABOUT</a> 
+		<a href = "contact.php" style = "background-color:grey;">CONTACT US</a>
 </div>
 <div align = "center">
 <img src = "images/contactus.png" style = "margin-top:0px; padding-left:0px;  padding-top:0px; opacity:0.5;" width = "1217" height = "330">
 </div>
 <div align = "center">
-<form method = "post" action = "feedback.html">
+<form method = "post" action = "feedback.php">
 	<span class="input input--kohana">
-					<input class="input__field input__field--kohana" type="text" id="input-29" style = "padding-left:18%; background-color:white; color:black;"required>
+					<input class="input__field input__field--kohana" name = "userName" type="text" id="input-29" style = "padding-left:18%; background-color:white; color:black;"required>
 					<label class="input__label input__label--kohana"style = "color:black; font-family:Merriweather; font-size:15px;" for="input-29">
 						<i class="fa fa-user icon icon--kohana" style = "color:blue;"></i>
 						<span class="input__label-content input__label-content--kohana">Name</span>
@@ -110,33 +139,33 @@ img{padding-bottom:0px; padding-top:85px; padding-left:25px;padding-bottom:50px;
 				</span>
 				
 	<span class="input input--kohana" style = "color : blue;">
-					<input class="input__field input__field--kohana" type="email" id="input-29" style = "padding-left:20%; background-color:white; color:black;"required>
+					<input class="input__field input__field--kohana" name = "userEmail" type="email" id="input-29" style = "padding-left:20%; background-color:white; color:black;"required>
 					<label class="input__label input__label--kohana" style = "color:black; font-family:Merriweather; font-size:15px;"for="input-29">
 						<i class="fa fa-at icon icon--kohana"style = "color:blue;"></i>
 						<span class="input__label-content input__label-content--kohana" >Email</span>
 					</label>
 				</span>
 	<span class="input input--kohana">
-					<input class="input__field input__field--kohana" type="number" id="input-29" style = "padding-left:38%; background-color:white; color:black;" required>
+					<input class="input__field input__field--kohana" name = "userNumber" type="number" id="input-29" style = "padding-left:38%; background-color:white; color:black;" required>
 					<label class="input__label input__label--kohana" style = "color:black; font-family:Merriweather; font-size:15px;"for="input-29" >
 						<i class="fa fa-fw fa-phone icon icon--kohana"style = "color:blue;"></i>
 						<span class="input__label-content input__label-content--kohana">Contact Number&emsp;</span>
 					</label>
 				</span>
 	<span class="input input--kohana">
-					<input class="input__field input__field--kohana" type="text" id="input-29" style = "border-color:black; padding-left:28%; background-color:white; color:black;"required>
+					<input class="input__field input__field--kohana" name = "userFeedback" type="text" id="input-29" style = "border-color:black; padding-left:28%; background-color:white; color:black;"required>
 					<label class="input__label input__label--kohana"style = "color:black; font-family:Merriweather; font-size:15px;" for="input-29">
 						<i class="fa fa-comments-o icon icon--kohana"style = "color:blue;"></i>
 						<span class="input__label-content input__label-content--kohana">Feedback</span>
 					</label>
 				</span><br>	
-	<input class = "button" type = "submit" value = "Submit">
+	<input class = "button" name = "feedback" type = "submit" value = "Submit">
 </form>
 </div>
 
-<footer style = "float:bottom; margin-top:100px;">
-<div align = "center";>
-Copyright 2017 &copy <a target="_blank" title="follow me on facebook" href="http://www.facebook.com/GetEmployedpk-1790173941234653"><img alt="follow us on facebook" src="images/facebook_icon_30x30.jpg" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a  title="follow me on Twitter" href="http://www.twitter.com/@GetemployedP"><img alt="follow us on Twitter" src="images/twitter30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a target="_blank" title="follow me on google plus" href="https://plus.google.com/u/3/114850687298878606480"><img alt="follow us on google plus" src="images/googleplus30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a target="_blank" title="follow me on instagram" href="http://www.instagram.com/getemployed.pk"><img alt="follow us on instagram" src="images/instagram30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a>
+<footer>
+<div align = "center">
+Copyright 2024 &copy <a target="_blank" title="follow me on facebook" href="http://www.facebook.com/GetEmployedpk-1790173941234653"><img alt="follow us on facebook" src="images/facebook_icon_30x30.jpg" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a  title="follow me on Twitter" href="http://www.twitter.com/@GetemployedP"><img alt="follow us on Twitter" src="images/twitter30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a target="_blank" title="follow me on google plus" href="https://plus.google.com/u/3/114850687298878606480"><img alt="follow us on google plus" src="images/googleplus30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a target="_blank" title="follow me on instagram" href="http://www.instagram.com/getemployed.pk"><img alt="follow us on instagram" src="images/instagram30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a>
 </div>
 </footer>
 </body>

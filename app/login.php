@@ -101,8 +101,8 @@ input[type=text]:focus {
   <a href = "login.php" style = "background-color:grey;">LOGIN</a>
 </div>
 		<a href = "index.php" style = "background-color:grey;">HOME</a>
-		<a href = "about.html" style = "background-color:grey;">ABOUT</a> 
-		<a href = "contact.html" style = "background-color:grey;">CONTACT US</a>
+		<a href = "about.php" style = "background-color:grey;">ABOUT</a> 
+		<a href = "contact.php" style = "background-color:grey;">CONTACT US</a>
 </div>
 <div align = "center">
 <?php

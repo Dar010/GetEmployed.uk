@@ -71,14 +71,42 @@ img{padding-bottom:0px; padding-top:85px; padding-left:25px;padding-bottom:50px;
 	</div>
 	
 	<div class="w3-panel w3-black">	
-	
-		<div align = "right">
+    <div align = "right">
+  <?php
+  session_start();
+  $con = mysqli_connect("localhost", "root", "", "getemployed");
+  if (!$con)
+      {
+          echo "connection problem";
+      }
+  else
+      {
+          $db = mysqli_select_db($con,"getemployed");
+          $unique = $_SESSION ["login_member"];
+          $query = "SELECT * FROM jobseeker WHERE JobSeeker_Email = '$unique'";
+          $result = mysqli_query($con,$query);
+          $col = mysqli_fetch_array($result);
+      }
+  if (!isset ($_SESSION["login_member"]))
+  {
+    ?>
   <a href = "sign.php" style = "background-color:grey;">SIGN UP</a>
-  <a href = "login.php" style = "background-color:grey;">LOGIN</a>
-	</div>
+  <a href = "login.php"  style = "background-color:grey;">LOGIN</a>
+    <?php }
+    else{
+        ?>
+    <div class="dropdown">
+    <a href = "profile.php" class="dropbtn" style = "background-color:grey;">SETTINGS</a>
+    <div class="dropdown-content" style="z-index:10;">
+    <a href = "editjobseeker.php">Update Profile</a><hr>
+        <a href = "logout.php">Logout</a>
+    </div>
+    </div>
+    <?php } ?>
+</div>
 		<a href = "index.php" style = "background-color:grey;">HOME</a>
-		<a href = "about.html" style = "background-color:grey;">ABOUT</a> 
-		<a href = "contact.html" style = "background-color:grey;">CONTACT US</a>
+		<a href = "about.php" style = "background-color:grey;">ABOUT</a> 
+		<a href = "contact.php" style = "background-color:grey;">CONTACT US</a>
 </div>
 <div align = "center">	
 <img src = "images/Untitled-3.png" height = "350px" width = "800px">

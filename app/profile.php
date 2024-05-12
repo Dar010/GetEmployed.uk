@@ -118,7 +118,7 @@ img{padding-bottom:0px; padding-top:50px; padding-bottom:50px; margin-right:10px
 <?php
 
 session_start();
-$con = mysqli_connect("localhost", "root", "");
+$con = mysqli_connect("localhost", "root", "", "getemployed");
 if (!$con)
 	{
 		echo "connection problem";
@@ -144,25 +144,6 @@ echo $col["JobSeeker_Name"];
 ?>
 </h1>
 </div>
-<form method = "post" action = "browse.php">
-<div align = "center" style = "font-family:Monotype Corsiva; font-size:25px; color:white; margin-top:0%";>
-	<select name = "cmp_type" style = "background-color:white; color:black";>
-	<option selected disabled>----Select Company Type----</option>
-	<option>Electronics</option>
-	<option>Education</option>
-	<option>Call Center</option>
-	<option>Media</option>
-	<option>Banking</option>
-	<option>Fashion</option>
-	<option>Restaurant/Hotels</option>
-	<option>Medical</option>
-	<option>Engineering</option>
-	<option>Information Technology (IT)</option>
-	<option>NGOs</option>
-	</select>
-	<input id = "butn" class = "btn" type = "submit" value = "BROWSE" name = "browse">
-	</form>
-	</div>
 <div style = "margin-left:20px";>
 <h2>
 Personal Information
@@ -188,7 +169,6 @@ echo $col["JobSeeker_Specialization"];
 </h4>
 </div>
 </div>
-<a href = "viewapply.php"><h2>View Applied Jobs</h2></a>
 <footer style = "margin-top:40px;">
 <div align = "center">
 Copyright 2024 &copy <a target="_blank" title="follow me on facebook" href="http://www.facebook.com/GetEmployedpk-1790173941234653"><img alt="follow us on facebook" src="images/facebook_icon_30x30.jpg" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a  title="follow me on Twitter" href="http://www.twitter.com/@GetemployedP"><img alt="follow us on Twitter" src="images/twitter30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a target="_blank" title="follow me on google plus" href="https://plus.google.com/u/3/114850687298878606480"><img alt="follow us on google plus" src="images/googleplus30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a><a target="_blank" title="follow me on instagram" href="http://www.instagram.com/getemployed.pk"><img alt="follow us on instagram" src="images/instagram30x30.png" border=0 style = "padding-bottom : 0px; padding-top:0px;"></a>
