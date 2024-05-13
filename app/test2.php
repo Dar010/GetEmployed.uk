@@ -289,7 +289,7 @@ function getTravelInfoTFL($user_postcode, $jobCoordinates)  {
 }
 
 // Main logic to fetch travel information and display job search results
-session_start();
+//session_start();
 if (isset($_POST["job_search"])) {
     $job_keyword = $_POST["keyword"];
     $job_location = $_POST["location"];
@@ -302,7 +302,7 @@ if (isset($_POST["job_search"])) {
         }
         else {
             // Query to fetch job search results from the database based on keyword and location
-            $query = "SELECT `job_title`, `company`, `job_location`, `job_description`, `job_co-ordinates` FROM `jobs` WHERE job_title LIKE '%$job_keyword%' AND job_location LIKE '%$job_location%'";
+            $query = "SELECT `jobs_id`, `job_title`, `company`, `job_location`, `job_description`, `job_co-ordinates` FROM `jobs` WHERE job_title LIKE '%$job_keyword%' AND job_location LIKE '%$job_location%'";
             //var_dump($query);
             $result = mysqli_query($con, $query);
             ?><p style = "color:white;"><?php
@@ -322,6 +322,7 @@ if (isset($_POST["job_search"])) {
                 // Fetch and display rows
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
+                    echo "<td> {$row['jobs_id']} </td>";
                     echo "<td> {$row['job_title']} </td>";
                     echo "<td> {$row['company']} </td>";
                     echo "<td> {$row['job_location']} </td>";
@@ -334,6 +335,20 @@ if (isset($_POST["job_search"])) {
                     echo "</tr>";
                 }
                 echo "</table>";
+                ?>
+                <form method = "post" action = "JobsApply.php" enctype = "multipart/form-data">
+                <select name = "apply_job" style = "background-color:white; color:black;">
+                <option selected disabled>----Select Job----</option>
+                <?php
+                $row1 = mysqli_fetch_assoc($result);
+                echo "<option>";
+                echo "{$row1['jobs_id']}";
+                echo "</option>";
+                ?>
+                </select>
+                <input class = "button" type = "submit" value = "Apply" name = "cnd_apply">
+                </form>
+                <?php
             }
             else {
                 echo "Error executing query: " . mysqli_error($con);

@@ -89,8 +89,10 @@ img{padding-bottom:0px; padding-top:85px; padding-left:25px;padding-bottom:50px;
 </div>
 <div class="w3-panel w3-black">	
 <div align = "right">
-  <?php
+<?php
   session_start();
+  if (isset ($_SESSION["login_member"]))
+  {
   $con = mysqli_connect("localhost", "root", "", "getemployed");
   if (!$con)
       {
@@ -104,22 +106,21 @@ img{padding-bottom:0px; padding-top:85px; padding-left:25px;padding-bottom:50px;
           $result = mysqli_query($con,$query);
           $col = mysqli_fetch_array($result);
       }
-  if (!isset ($_SESSION["login_member"]))
+      ?>
+      <div class="dropdown">
+      <a href = "profile.php" class="dropbtn" style = "background-color:grey;">SETTINGS</a>
+      <div class="dropdown-content" style="z-index:10;">
+      <a href = "editjobseeker.php">Update Profile</a><hr>
+          <a href = "logout.php">Logout</a>
+      </div>
+      </div>
+      <?php }
+  else
   {
     ?>
   <a href = "sign.php" style = "background-color:grey;">SIGN UP</a>
   <a href = "login.php"  style = "background-color:grey;">LOGIN</a>
-    <?php }
-    else{
-        ?>
-    <div class="dropdown">
-    <a href = "profile.php" class="dropbtn" style = "background-color:grey;">SETTINGS</a>
-    <div class="dropdown-content" style="z-index:10;">
-    <a href = "editjobseeker.php">Update Profile</a><hr>
-        <a href = "logout.php">Logout</a>
-    </div>
-    </div>
-    <?php } ?>
+    <?php }?>
 </div>
 		<a href = "index.php" style = "background-color:grey;">HOME</a>
 		<a href = "about.php" style = "background-color:grey;">ABOUT</a> 

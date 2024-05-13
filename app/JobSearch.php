@@ -115,8 +115,10 @@ input[type=text]:focus {
 	</div>
 	<div class="w3-panel w3-black">	
     <div align = "right">
-  <?php
+    <?php
   session_start();
+  if (isset ($_SESSION["login_member"]))
+  {
   $con = mysqli_connect("localhost", "root", "", "getemployed");
   if (!$con)
       {
@@ -130,22 +132,21 @@ input[type=text]:focus {
           $result = mysqli_query($con,$query);
           $col = mysqli_fetch_array($result);
       }
-  if (!isset ($_SESSION["login_member"]))
+      ?>
+      <div class="dropdown">
+      <a href = "profile.php" class="dropbtn" style = "background-color:grey;">SETTINGS</a>
+      <div class="dropdown-content" style="z-index:10;">
+      <a href = "editjobseeker.php">Update Profile</a><hr>
+          <a href = "logout.php">Logout</a>
+      </div>
+      </div>
+      <?php }
+  else
   {
     ?>
   <a href = "sign.php" style = "background-color:grey;">SIGN UP</a>
   <a href = "login.php"  style = "background-color:grey;">LOGIN</a>
-    <?php }
-    else{
-        ?>
-    <div class="dropdown">
-    <a href = "profile.php" class="dropbtn" style = "background-color:grey;">SETTINGS</a>
-    <div class="dropdown-content" style="z-index:10;">
-    <a href = "editjobseeker.php">Update Profile</a><hr>
-        <a href = "logout.php">Logout</a>
-    </div>
-    </div>
-    <?php } ?>
+    <?php }?>
 </div>
 		<a href = "index.php" style = "background-color:grey;">HOME</a>
 		<a href = "about.php" style = "background-color:grey;">ABOUT</a> 
@@ -289,7 +290,7 @@ function getTravelInfoTFL($user_postcode, $jobCoordinates)  {
 }
 
 // Main logic to fetch travel information and display job search results
-session_start();
+//session_start();
 if (isset($_POST["job_search"])) {
     $job_keyword = $_POST["keyword"];
     $job_location = $_POST["location"];
